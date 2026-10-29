@@ -1,6 +1,6 @@
 /* Layout: a stack of 16:9 slides; every slide is a container and sizes in em, where 1em = 1/120 of slide width (16px at 1920). */
 :root{
-  --cayenne:#9D3F0D; --glass:#9AB0AA; --cocoa:#391B17; --limestone:#F2EDE5; --travertine:#DED6CA; --page:#2a1411;
+  --cayenne:#9D3F0D; --glass:#9AB0AA; --cocoa:#391B17; --limestone:#D8C9B7; --travertine:#D8C9B7; --page:#2a1411;
   --f-display:'Cormorant Garamond','EB Garamond',Georgia,serif;
   --f-serif2:'EB Garamond',Georgia,serif;
   --f-dmserif:'DM Serif Display',Georgia,serif;

@@ -92,3 +92,8 @@
 .igt img,.ap-art img,.ph-r img{display:block;width:100%;height:100%;object-fit:cover}
 .ap-art{aspect-ratio:4/5}
 .ap-grid{grid-template-columns:repeat(8,1fr)!important}
+.specs{display:flex;flex-direction:column;gap:.55em}
+.specs div{display:grid;grid-template-columns:1.1em 9em 1fr;gap:.7em;align-items:center;font:400 .78em/1.3 var(--f-sans)}
+.specs i{width:1.1em;height:1.1em;border:1px solid rgba(57,27,23,.2)}
+.specs b{font-weight:500}
+.specs span{font-variant-numeric:tabular-nums;opacity:.8}

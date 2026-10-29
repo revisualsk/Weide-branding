@@ -4,7 +4,7 @@ from logos2 import symbol_B2
 from logos3 import logo_GA, logo_GC, logo_CB, mono_GA, wonly_GA, sym_GC, simple, text_path, GRAZE, CHAMB, LUX, QSERIF, QSCRIPT
 from mat import MAT_DEFS, wax_blob
 
-CAY, GLA, COC, LIM, TRA = '#9D3F0D', '#9AB0AA', '#391B17', '#F2EDE5', '#DED6CA'
+CAY, GLA, COC, LIM, TRA = '#9D3F0D', '#9AB0AA', '#391B17', '#D8C9B7', '#D8C9B7'
 
 LA, LB, LC = logo_GA(), logo_CB(), logo_GC()
 SA, SB, SC = wonly_GA(), symbol_B2(), sym_GC()

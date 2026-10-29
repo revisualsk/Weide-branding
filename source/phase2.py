@@ -141,10 +141,11 @@ mslide(f'''<div class="pad misuse"><div><p class="eyebrow">Nesprávne použitie<
 {bad('<svg class="busy" viewBox="0 0 600 340" preserveAspectRatio="xMidYMid slice"><rect width="600" height="340" fill="' + GLA + '"/><g transform="translate(-700,-40)">' + willow(seed=5, x0=700, x1=1300, n=16, scale=.8) + '</g></svg>' + mk(LA, COC, w="70%").replace('<svg class="mark"', '<svg class="mark over"', 1), GLA, 'Neumiestňovať na rušivé pozadie')}
 </div></div>''', lab='Nesprávne použitie')
 
-combos = [(LIM, COC, 'Limestone na Cocoa', '13.4 : 1'), (COC, LIM, 'Cocoa na Limestone', '13.4 : 1'), (COC, GLA, 'Cocoa na Glass', '6.8 : 1'), (LIM, CAY, 'Limestone na Cayenne', '5.7 : 1'), (COC, TRA, 'Cocoa na Travertine', '10.9 : 1'), (CAY, LIM, 'Cayenne na Limestone', '5.7 : 1')]
+combos = [(LIM, COC, 'Sand Limestone na Cocoa', '9.6 : 1'), (COC, LIM, 'Cocoa na Sand Limestone', '9.6 : 1'), (COC, GLA, 'Cocoa na Glass', '6.8 : 1'), (LIM, CAY, 'Sand Limestone na Cayenne', '4.1 : 1 · veľký text'), (GLA, COC, 'Glass na Cocoa', '6.8 : 1'), (CAY, LIM, 'Cayenne na Sand Limestone', '4.1 : 1 · veľký text')]
 mslide(f'''<div class="pad colors"><div class="col-l"><p class="eyebrow">Farby</p><h2>Paleta a pomer.</h2>
-{ratio([('Bitter Cocoa', COC, 50, LIM), ('Limestone', LIM, 22, COC), ('Weathered Glass', GLA, 14, COC), ('Travertine', TRA, 6, COC), ('Cayenne', CAY, 8, LIM)])}
-<p class="body">Cocoa nesie značku, Limestone dáva vzduch, Glass upokojuje a Cayenne je akcent: tlačidlá, pečať, jeden prvok na formát.</p></div>
+{ratio([('Bitter Cocoa', COC, 48, LIM), ('Sand Limestone', LIM, 26, COC), ('Weathered Glass', GLA, 16, COC), ('Cayenne', CAY, 10, LIM)])}
+<div class="specs">{''.join(f'<div><i style="background:{h}"></i><b>{n}</b><span>HEX {h} · RGB {rgb} · CMYK {cmyk}</span></div>' for n, h, rgb, cmyk in (('Cayenne Dust', CAY, '157 63 13', '24 74 100 13'), ('Weathered Glass', GLA, '154 176 170', '42 18 29 5'), ('Bitter Cocoa', COC, '57 27 23', '46 78 72 70'), ('Sand Limestone', LIM, '216 201 183', '15 18 26 0')))}</div>
+<p class="body">Cocoa nesie značku, Sand Limestone dáva vzduch, Glass upokojuje a Cayenne je akcent: tlačidlá, pečať, jeden prvok na formát.</p></div>
 <div class="combo-grid">{''.join(f'<div class="combo" style="background:{b};color:{f}"><span class="cmb-big">Aa</span><span>{n}</span><b>{c}</b></div>' for f, b, n, c in combos)}</div></div>''', lab='Farby')
 
 mslide(f'''<div class="pad typo2"><div><p class="eyebrow">Typografia</p><h2>Tri hlasy, jasné úlohy.</h2></div>
