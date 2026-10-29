@@ -1,11 +1,14 @@
 import math, random, os, sys
-from logos import logo_A, logo_B, logo_C, symbol_A, symbol_B, symbol_C
+from logos import symbol_A
+from logos2 import logo_A2, logo_B2, logo_C2, seal_A, symbol_B2, symbol_C2
+from mat import MAT_DEFS, wax_blob
 
 CAY, GLA, COC, LIM, TRA = '#9D3F0D', '#9AB0AA', '#391B17', '#F2EDE5', '#DED6CA'
 OUT = sys.argv[1]
 
-LA, LB, LC = logo_A(), logo_B(), logo_C()
-SA, SB, SC = symbol_A(), symbol_B(), symbol_C()
+LA, LB, LC = logo_A2(), logo_B2(), logo_C2()
+SA, SB, SC = symbol_A(), symbol_B2(), symbol_C2()
+SEAL = seal_A()
 
 def strip_defs(body):
     return body.split('</defs>', 1)[1] if body.startswith('<defs>') else body
@@ -33,7 +36,9 @@ def standalone(lg, fill, accent=None, pad=40):
 
 GLOBAL_DEFS = f'''<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <clipPath id="aCut"><path d="M0 -700H600V-428H213V-212H600V100H0Z"/></clipPath>
-<clipPath id="cCut"><path d="M-50 100V-505L372 -505L372 -604L512 -690V100Z"/></clipPath>
+<clipPath id="cCut2"><path d="M-50 100V-560H300L460 -700V100Z"/></clipPath>
+{MAT_DEFS}
+<radialGradient id="wax" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#b8541d"/><stop offset=".7" stop-color="#9D3F0D"/><stop offset="1" stop-color="#6e2706"/></radialGradient>
 <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
 <filter id="stone" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".0035 .045" numOctaves="4" seed="7"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .47  0 0 0 0 .38  0 0 0 .9 -.32"/><feComposite in2="SourceGraphic" operator="in"/></filter>
 <filter id="plaster" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".012" numOctaves="5" seed="3"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .5 -.12"/><feComposite in2="SourceGraphic" operator="in"/></filter>
@@ -48,38 +53,53 @@ GLOBAL_DEFS = f'''<svg width="0" height="0" style="position:absolute" aria-hidde
 <linearGradient id="copperfoil" x1="0" y1="0" x2="1" y2=".5"><stop offset="0" stop-color="#7d2f08"/><stop offset=".45" stop-color="#d27a45"/><stop offset=".6" stop-color="#9D3F0D"/><stop offset="1" stop-color="#c0612b"/></linearGradient>
 </defs></svg>'''
 
+def chrome(fg, op=.8, left='WEIDE® — LONGEVITY &amp; REGENERATIVE HEALTH', right='BRAND IDENTITY · PHASE 1', bl='DESIGNED BY REVISUAL', bm='2026 · AUSTRIA', br='© 2026 REVISUAL'):
+    t = lambda x, y, s, a='start': f'<text x="{x}" y="{y}" text-anchor="{a}" class="t-dmsans" font-size="13" letter-spacing="2.6" fill="{fg}" opacity="{op}">{s}</text>'
+    return t(60, 62, left) + t(1860, 62, right, 'end') + t(60, 1030, bl) + t(960, 1030, bm, 'middle') + t(1860, 1030, br, 'end')
+
+def tags(x, y, words, fg, size=13):
+    out = []; cx = x
+    for w_ in words:
+        w = len(w_) * size * .78 + 28
+        out.append(f'<rect x="{cx}" y="{y}" width="{w:.0f}" height="{size+15}" fill="none" stroke="{fg}" stroke-width="1"/><text x="{cx+w/2:.0f}" y="{y+size+5}" text-anchor="middle" class="t-dmsans" font-size="{size}" letter-spacing="2.4" fill="{fg}">{w_}</text>')
+        cx += w
+    return ''.join(out)
+
 def grain(w=1920, h=1080, op=.22):
     return f'<rect width="{w}" height="{h}" fill="#fff" filter="url(#grain)" opacity="{op}" style="mix-blend-mode:overlay"/>'
 
 # ---------------------------------------------------------------- HERO A
 def hero_A():
-    s = f'''<svg class="art" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    body, (bx, by, bw, bh) = LA
+    W = 1640; s_ = W / bw; h = bh * s_
+    rows = ''.join(f'<g transform="translate(140,{y:.0f}) scale({s_:.5f}) translate({-bx},{-by})" fill="none" stroke="#6a3a2e" stroke-width="{1.6/s_:.2f}">{strip_defs(body)}</g>'
+                   for y in (150, 150 + h + 40, 150 + 2 * (h + 40)))
+    return f'''<svg class="art" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
 <defs>
-<linearGradient id="hAbg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#47231d"/><stop offset=".55" stop-color="#391B17"/><stop offset="1" stop-color="#2b130f"/></linearGradient>
-<radialGradient id="hAglow" cx=".5" cy="1" r=".8"><stop offset="0" stop-color="{CAY}" stop-opacity=".95"/><stop offset=".55" stop-color="#6a2a10" stop-opacity=".55"/><stop offset="1" stop-color="#2a120e" stop-opacity="0"/></radialGradient>
-<linearGradient id="hAniche" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f0d0a"/><stop offset="1" stop-color="#2c140f"/></linearGradient>
-<radialGradient id="hAsphere" cx=".34" cy=".3" r=".75"><stop offset="0" stop-color="#d6e0dc"/><stop offset=".35" stop-color="{GLA}"/><stop offset=".75" stop-color="#4c5a56"/><stop offset="1" stop-color="#1e1512"/></radialGradient>
-<linearGradient id="hAbeam" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3e3" stop-opacity=".22"/><stop offset="1" stop-color="#fff3e3" stop-opacity="0"/></linearGradient>
-<linearGradient id="hAplinth" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6b3a2c"/><stop offset=".5" stop-color="#4a241c"/><stop offset="1" stop-color="#2a130f"/></linearGradient>
+<radialGradient id="hAbg" cx=".5" cy=".45" r=".75"><stop offset="0" stop-color="#4a241d"/><stop offset="1" stop-color="#2a130f"/></radialGradient>
+<radialGradient id="hAglow" cx=".5" cy="1" r=".9"><stop offset="0" stop-color="{CAY}" stop-opacity=".95"/><stop offset=".6" stop-color="#5a230c" stop-opacity=".5"/><stop offset="1" stop-color="#1c0b08" stop-opacity="0"/></radialGradient>
+<radialGradient id="hAsphere" cx=".34" cy=".3" r=".75"><stop offset="0" stop-color="#dfe8e4"/><stop offset=".35" stop-color="{GLA}"/><stop offset=".78" stop-color="#46524f"/><stop offset="1" stop-color="#1a1210"/></radialGradient>
+<linearGradient id="hAplinth" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7a4535"/><stop offset=".45" stop-color="#4a241c"/><stop offset="1" stop-color="#22100c"/></linearGradient>
+<linearGradient id="hAbeam" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3e3" stop-opacity=".28"/><stop offset="1" stop-color="#fff3e3" stop-opacity="0"/></linearGradient>
+<clipPath id="hAoval"><ellipse cx="960" cy="520" rx="240" ry="350"/></clipPath>
 </defs>
 <rect width="1920" height="1080" fill="url(#hAbg)"/>
-<rect width="1920" height="1080" fill="#000" filter="url(#plaster)" opacity=".5"/>
-<path d="M250 1080V430A270 270 0 0 1 790 430V1080Z" fill="url(#hAniche)"/>
-<path d="M250 1080V430A270 270 0 0 1 790 430V1080Z" fill="url(#hAglow)"/>
-<path d="M250 430A270 270 0 0 1 790 430" fill="none" stroke="#5a2e24" stroke-width="2"/>
-<rect x="395" y="780" width="250" height="300" fill="url(#hAplinth)"/>
-<rect x="395" y="780" width="250" height="6" fill="#8a5a46" opacity=".7"/>
-<ellipse cx="520" cy="782" rx="120" ry="14" fill="#140806" opacity=".55" filter="url(#soft)"/>
-<circle cx="520" cy="660" r="120" fill="url(#hAsphere)"/>
-<polygon points="1240,0 1560,0 700,1080 250,1080" fill="url(#hAbeam)" style="mix-blend-mode:screen"/>
-<line x1="960" y1="140" x2="960" y2="940" stroke="{GLA}" stroke-width="1.2" opacity=".55"/>
-{nest(LA, LIM, LIM, 1060, 420, 700)}
-<text x="1062" y="600" class="t-sans" font-size="17" letter-spacing="7.5" fill="{GLA}">LONGEVITY &amp; REGENERATIVE HEALTH</text>
-<text x="1060" y="860" class="t-cormorant-i" font-size="64" fill="{LIM}">Time, well kept.</text>
-<text x="1062" y="910" class="t-sans" font-size="15" letter-spacing="4" fill="{LIM}" opacity=".6">AUSTRIA</text>
-{grain()}
+<rect width="1920" height="1080" fill="#391B17" filter="url(#leather)" opacity=".55"/>
+{''.join(f'<line x1="{x}" x2="{x}" y1="0" y2="1080" stroke="#4d271f" stroke-width="1"/>' for x in range(24, 1920, 48))}
+{rows}
+<g clip-path="url(#hAoval)">
+<rect x="700" y="160" width="520" height="760" fill="#1d0c09"/>
+<rect x="700" y="160" width="520" height="760" fill="url(#hAglow)"/>
+<rect x="870" y="690" width="180" height="240" fill="url(#hAplinth)"/>
+<ellipse cx="960" cy="692" rx="92" ry="10" fill="#0d0504" opacity=".6" filter="url(#soft)"/>
+<circle cx="960" cy="600" r="92" fill="url(#hAsphere)"/>
+<polygon points="1080,160 1230,160 830,920 700,920" fill="url(#hAbeam)" style="mix-blend-mode:screen"/>
+</g>
+<ellipse cx="960" cy="520" rx="240" ry="350" fill="none" stroke="{GLA}" stroke-width="1" opacity=".5"/>
+{nest(LA, LIM, LIM, 750, 912, 420)}
+{chrome(LIM, .7, bm='')}
+{grain(op=.2)}
 </svg>'''
-    return s
 
 # ---------------------------------------------------------------- HERO B
 def hero_B():
@@ -116,8 +136,9 @@ def hero_B():
 <text x="1478" y="194" class="t-manrope" font-size="15" letter-spacing="2" fill="{COC}">1 000</text>
 <text x="1180" y="788" class="t-manrope" font-size="14" letter-spacing="3" fill="{COC}" opacity=".8">± 0.00</text>
 <g transform="translate(130,1010) scale({s_:.5f}) translate({-bx},0)" fill="{COC}" style="--acc:{CAY}">{body}</g>
-<text x="1180" y="96" class="t-manrope-m" font-size="16" letter-spacing="6" fill="{COC}">LONGEVITY &amp; REGENERATIVE HEALTH</text>
-<text x="1180" y="146" class="t-garamond-i" font-size="40" fill="{COC}">Built for the next fifty years.</text>
+<text x="1180" y="118" class="t-garamond-i" font-size="40" fill="{COC}">Built for the next fifty years.</text>
+{tags(1182, 138, ["PRECISION", "REGENERATION", "VITALITY"], COC, 12)}
+{chrome(COC, .75)}
 {grain(op=.16)}
 </svg>'''
     return s
@@ -167,6 +188,7 @@ def hero_C():
 <g>{willow()}</g>
 {nest(LC, LIM, COC, 130, 610, 780)}
 <text x="140" y="900" class="t-dmsans" font-size="18" letter-spacing="7" fill="{LIM}">LONGEVITY &amp; REGENERATIVE HEALTH</text>
+{chrome(LIM, .75)}
 <text x="140" y="250" class="t-dmserif-i" font-size="58" fill="{LIM}">Regeneration is</text>
 <text x="140" y="318" class="t-dmserif-i" font-size="58" fill="{LIM}">a daily practice.</text>
 {grain(op=.2)}
@@ -175,23 +197,26 @@ def hero_C():
 
 # ---------------------------------------------------------------- APPLICATIONS
 def app_A():
-    def card(x, y, rot, bg, fg, back=False):
-        inner = (nest(LA, fg, fg, 170, 260, 510) if back else
-                 f'''{nest(SA, fg, fg, 70, 70, 80)}
-<text x="70" y="330" class="t-cormorant" font-size="44" fill="{fg}">Dr. Name Surname</text>
-<text x="70" y="370" class="t-sans" font-size="15" letter-spacing="4" fill="{fg}" opacity=".75">LONGEVITY MEDICINE</text>
-<text x="70" y="440" class="t-sans" font-size="16" letter-spacing="1" fill="{fg}" opacity=".75">+43 000 000 000 · name@weide.at</text>
-<text x="780" y="440" text-anchor="end" class="t-sans" font-size="14" letter-spacing="4" fill="{fg}" opacity=".6">WEIDE</text>''')
-        return f'''<g transform="translate({x},{y}) rotate({rot})" filter="url(#lift)"><rect width="850" height="550" rx="6" fill="{bg}"/>
-<rect width="850" height="550" rx="6" fill="#fff" filter="url(#plaster)" opacity=".25"/>{inner}</g>'''
     return f'''<svg class="art" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-<defs><linearGradient id="aStone" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a9bcb7"/><stop offset="1" stop-color="#7f958f"/></linearGradient>
-<linearGradient id="aLight" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
-<rect width="1920" height="1080" fill="url(#aStone)"/>
-<rect width="1920" height="1080" fill="#fff" filter="url(#stone)" opacity=".45"/>
-{card(130, 300, -8, COC, 'url(#foil)', back=True)}
-{card(1000, 400, 5, LIM, COC)}
-<polygon points="0,0 900,0 300,1080 0,1080" fill="url(#aLight)"/>
+<defs><linearGradient id="aLight" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2e2" stop-opacity=".14"/><stop offset=".55" stop-color="#fff2e2" stop-opacity="0"/></linearGradient>
+<linearGradient id="aEdge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a3128"/><stop offset="1" stop-color="#2a130f"/></linearGradient></defs>
+<rect width="1920" height="1080" fill="#2a130f"/>
+<rect width="1920" height="1080" fill="#2a130f" filter="url(#leather)" opacity=".6"/>
+<g transform="rotate(-7 960 540)">
+ <rect x="330" y="120" width="1260" height="860" rx="14" fill="#140806" opacity=".55" filter="url(#softer)"/>
+ <rect x="300" y="90" width="1260" height="860" rx="14" fill="url(#aEdge)"/>
+ <rect x="300" y="84" width="1260" height="860" rx="14" fill="{COC}"/>
+ <rect x="300" y="84" width="1260" height="860" rx="14" fill="{COC}" filter="url(#leather)"/>
+ <rect x="330" y="114" width="1200" height="800" rx="8" fill="none" stroke="#2a120e" stroke-width="2" stroke-dasharray="9 7" opacity=".9"/>
+ <g filter="url(#debossLeather)">{nest(LA, COC, COC, 560, 400, 740)}</g>
+ <g filter="url(#debossLeather)"><text x="930" y="560" text-anchor="middle" class="t-dmsans" font-size="17" letter-spacing="9" fill="{COC}">LONGEVITY &amp; REGENERATIVE HEALTH</text></g>
+</g>
+<g filter="url(#liftS)"><g filter="url(#raise)"><path d="{wax_blob(1420, 770, 128, seed=5)}" fill="url(#wax)"/></g></g>
+<g filter="url(#debossWax)">{nest(SEAL, CAY, CAY, 1320, 670, 200)}</g>
+<g transform="translate(160,700) rotate(9)" filter="url(#lift)"><rect width="520" height="320" fill="{LIM}"/><rect width="520" height="320" fill="{LIM}" filter="url(#paper)"/>
+<g filter="url(#deboss)">{nest(LA, LIM, LIM, 120, 135, 280)}</g>
+<text x="260" y="250" text-anchor="middle" class="t-dmsans" font-size="10" letter-spacing="3.5" fill="{COC}" opacity=".7">DR. NAME SURNAME · LONGEVITY MEDICINE</text></g>
+<rect width="1920" height="1080" fill="url(#aLight)"/>
 {grain(op=.14)}
 </svg>'''
 
@@ -216,28 +241,20 @@ def app_B():
 
 def app_C():
     return f'''<svg class="art" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-<defs><linearGradient id="cBottle" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7f9790"/><stop offset=".22" stop-color="#c3d2ce"/><stop offset=".4" stop-color="{GLA}"/><stop offset="1" stop-color="#6e857f"/></linearGradient>
-<linearGradient id="cCap" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2a120f"/><stop offset=".3" stop-color="#5a2e26"/><stop offset="1" stop-color="#24100d"/></linearGradient>
-<linearGradient id="cWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a8460f"/><stop offset="1" stop-color="{CAY}"/></linearGradient></defs>
-<rect width="1920" height="720" fill="url(#cWall)"/>
-<rect y="720" width="1920" height="360" fill="{LIM}"/>
-<rect y="720" width="1920" height="360" fill="#000" filter="url(#plaster)" opacity=".25"/>
-<g opacity=".35">{willow(seed=21, x0=1250, x1=1960, n=14, scale=.8)}</g>
-<ellipse cx="760" cy="905" rx="250" ry="34" fill="#391B17" opacity=".35" filter="url(#soft)"/>
-<path d="M560 420Q560 380 600 380H920Q960 380 960 420V880Q960 910 930 910H590Q560 910 560 880Z" fill="url(#cBottle)"/>
-<rect x="680" y="250" width="160" height="140" rx="10" fill="url(#cCap)"/>
-<rect x="600" y="500" width="320" height="300" fill="{LIM}"/>
-{nest(LC, COC, CAY, 640, 610, 240)}
-<line x1="640" x2="880" y1="660" y2="660" stroke="{COC}" stroke-width="1" opacity=".4"/>
-<text x="640" y="700" class="t-dmsans" font-size="15" letter-spacing="4" fill="{COC}">DAILY PROTOCOL</text>
-<text x="640" y="730" class="t-dmserif-i" font-size="22" fill="{COC}">Magnesium · Glycine</text>
-<text x="640" y="775" class="t-dmsans" font-size="13" letter-spacing="2" fill="{COC}" opacity=".6">60 CAPSULES · Nº 03</text>
-<rect x="585" y="420" width="22" height="460" fill="#fff" opacity=".28" rx="10"/>
-<g transform="translate(1150,600) rotate(-6)" filter="url(#lift)"><rect width="420" height="560" fill="{COC}"/>
-{nest(SC, LIM, CAY, 60, 70, 46)}
-<text x="60" y="300" class="t-dmserif-i" font-size="44" fill="{LIM}">Welcome</text><text x="60" y="350" class="t-dmserif-i" font-size="44" fill="{LIM}">to your first day.</text>
-<text x="60" y="480" class="t-dmsans" font-size="14" letter-spacing="4" fill="{GLA}">YOUR PROGRAMME · WEEK 01</text></g>
-{grain(op=.16)}
+<defs><clipPath id="cPaper"><rect x="420" y="90" width="760" height="980"/></clipPath>
+<linearGradient id="cLight" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+<rect width="1920" height="1080" fill="{CAY}"/>
+<rect width="1920" height="1080" fill="{CAY}" filter="url(#clay)"/>
+<g filter="url(#lift)"><rect x="420" y="90" width="760" height="980" fill="{LIM}"/></g>
+<rect x="420" y="90" width="760" height="980" fill="{LIM}" filter="url(#paper)"/>
+<g clip-path="url(#cPaper)"><g filter="url(#deboss)" transform="translate(-260,40)">{willow(seed=11, x0=760, x1=1430, n=11, scale=1.05, leafcol=(LIM, LIM, LIM))}</g></g>
+{nest(LC, COC, CAY, 560, 830, 320)}
+<text x="562" y="975" class="t-dmsans" font-size="12" letter-spacing="4" fill="{COC}" opacity=".75">LONGEVITY &amp; REGENERATIVE HEALTH</text>
+<g transform="translate(1260,330) rotate(8)" filter="url(#lift)"><rect width="420" height="600" fill="{COC}"/><rect width="420" height="600" fill="{COC}" filter="url(#leather)" opacity=".6"/>
+<g filter="url(#foilE)">{nest(LC, "url(#foil)", "url(#copperfoil)", 80, 300, 260)}</g>
+<text x="210" y="520" text-anchor="middle" class="t-dmserif-i" font-size="26" fill="{GLA}">Regeneration is a daily practice.</text></g>
+<rect width="1920" height="1080" fill="url(#cLight)"/>
+{grain(op=.14)}
 </svg>'''
 
 # ---------------------------------------------------------------- MOOD TILES
@@ -248,10 +265,10 @@ def tiles_A():
     return [
         ('Raking light on plaster', tile_svg(f'<rect width="600" height="600" fill="#000" filter="url(#plaster)" opacity=".6"/><polygon points="380,0 520,0 160,600 -60,600" fill="#fff3e3" opacity=".16"/><polygon points="430,0 470,0 60,600 10,600" fill="#fff3e3" opacity=".12"/>', COC)),
         ('Stone sphere, glass skin', tile_svg(f'<defs><radialGradient id="tAs" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#e3ebe8"/><stop offset=".4" stop-color="{GLA}"/><stop offset="1" stop-color="#1e1512"/></radialGradient></defs><ellipse cx="300" cy="470" rx="170" ry="18" fill="#000" opacity=".5" filter="url(#soft)"/><circle cx="300" cy="320" r="160" fill="url(#tAs)"/>', '#2b130f')),
-        ('Bronze, hand-patinated', tile_svg('<rect width="600" height="600" fill="url(#bronze)"/><rect width="600" height="600" fill="#000" filter="url(#stone)" opacity=".35"/>', '#5a2f22')),
+        ('Cocoa leather, deboss', tile_svg(f'<rect width="600" height="600" fill="{COC}" filter="url(#leather)"/><g filter="url(#debossLeather)">{nest(LA, COC, COC, 60, 270, 480)}</g>', COC)),
         ('Cayenne velvet', tile_svg(f'<defs><radialGradient id="tAv" cx=".3" cy=".2" r="1"><stop offset="0" stop-color="#c25a22"/><stop offset=".6" stop-color="{CAY}"/><stop offset="1" stop-color="#5a2007"/></radialGradient></defs><rect width="600" height="600" fill="url(#tAv)"/><path d="M0 380Q200 300 330 420T600 360V600H0Z" fill="#000" opacity=".22" filter="url(#soft)"/>', CAY)),
-        ('Arched niche', tile_svg(f'<path d="M190 600V300A110 110 0 0 1 410 300V600Z" fill="#1d0c09"/><path d="M190 600V300A110 110 0 0 1 410 300V600Z" fill="{CAY}" opacity=".25"/>', '#47231d')),
-        ('Cotton paper, blind deboss', tile_svg(f'<rect width="600" height="600" fill="#000" filter="url(#plaster)" opacity=".18"/>{nest(SA, "#e2d9cc", LIM, 170, 230, 260)}', LIM)),
+        ('Cayenne wax seal', tile_svg(f'<rect width="600" height="600" fill="{LIM}" filter="url(#paper)"/><g filter="url(#liftS)"><g filter="url(#raise)"><path d="{wax_blob(300, 300, 150, seed=8)}" fill="url(#wax)"/></g></g><g filter="url(#debossWax)">{nest(SEAL, CAY, CAY, 180, 180, 240)}</g>', LIM)),
+        ('Cotton paper, blind deboss', tile_svg(f'<rect width="600" height="600" fill="{LIM}" filter="url(#paper)"/><g filter="url(#deboss)">{nest(SA, LIM, LIM, 150, 220, 300)}</g>', LIM)),
     ]
 
 def tiles_B():
@@ -269,7 +286,7 @@ def tiles_C():
         ('Willow in motion', tile_svg(f'<g transform="translate(-700,-40) scale(1)">{willow(seed=5, x0=700, x1=1350, n=12, scale=.9)}</g>', GLA)),
         ('Sun-warmed clay', tile_svg(f'<defs><radialGradient id="tCc" cx=".3" cy=".25" r="1"><stop offset="0" stop-color="#c76a35"/><stop offset="1" stop-color="#7d300a"/></radialGradient></defs><rect width="600" height="600" fill="url(#tCc)"/><rect width="600" height="600" fill="#000" filter="url(#plaster)" opacity=".4"/>', CAY)),
         ('Skin, linen, morning light', tile_svg(f'<path d="M-20 420C120 300 240 480 380 380S560 300 640 340V620H-20Z" fill="#e7d7c6"/><path d="M-20 470C140 380 260 540 400 440S580 380 640 400V620H-20Z" fill="#d8c2ac"/><polygon points="420,0 600,0 600,200" fill="#fff" opacity=".35" filter="url(#soft)"/>', LIM)),
-        ('Seed & leaf', tile_svg(f'{nest(SC, COC, CAY, 245, 150, 110)}', TRA)),
+        ('Willow, blind deboss', tile_svg(f'<rect width="600" height="600" fill="{LIM}" filter="url(#paper)"/><g filter="url(#deboss)" transform="translate(-760,-60)">{willow(seed=13, x0=760, x1=1360, n=7, scale=.9, leafcol=(LIM, LIM, LIM))}</g>', LIM)),
         ('Cocoa ceramic', tile_svg(f'<defs><radialGradient id="tCk" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#6b3b31"/><stop offset="1" stop-color="#22100c"/></radialGradient></defs><ellipse cx="300" cy="300" rx="210" ry="210" fill="url(#tCk)"/><ellipse cx="300" cy="300" rx="150" ry="150" fill="#2a130f"/>', '#4a241c')),
         ('Water, slow', tile_svg(''.join(f'<path d="M0 {y}Q150 {y-14} 300 {y}T600 {y}" fill="none" stroke="#fff" stroke-opacity="{.12+.02*(i%5)}" stroke-width="2"/>' for i, y in enumerate(range(40, 600, 26))), '#86a09a')),
     ]
@@ -288,7 +305,7 @@ DIR = {
    thesis='Dlhovekosť ako kultúra, nie ako služba. WEIDE vystupuje s pokojom súkromnej galérie: tmavé priestory, svetlo, ktoré modeluje formu, a typografia s kontrastom klasickej knihy.',
    logo_text=[('Prepletené W', 'Dve prekrývajúce sa V z Cormorant Garamond tvoria slučku. Odkazuje na vŕbové prútie (Weide = vŕba) a na kontinuitu.'),
               ('Dýchajúce E', 'Stredné rameno oboch E je odpojené od kmeňa a zúžené na vlasovú linku. Malá medzera dáva písmu vzduch a je to podpisový detail značky.'),
-              ('Rytmus', 'Pre display veľkosti široký tracking +120 jednotiek s optickými korekciami W–E a D–E. Monogram W slúži ako pečať, favicon a slepotlač.')],
+              ('Tesná sadzba', 'Display kerning stiahnutý na hranu, serify W a E sa takmer dotýkajú. Wordmark pôsobí ako jeden celok s vysokým kontrastom ťahov. Monogram W slúži ako pečať, favicon a razba.')],
    type_pair=('Cormorant Garamond', 'DM Sans'),
    ratio=[('Bitter Cocoa', COC, 58, LIM), ('Limestone', LIM, 18, COC), ('Weathered Glass', GLA, 14, COC), ('Cayenne', CAY, 10, LIM)],
    words='Šero · Socha · Bronz · Ticho · Rituál',
@@ -296,7 +313,7 @@ DIR = {
  'B': dict(name='Architectural Modernism', code='Monolith', logo=LB, sym=SB, acc_light=CAY, acc_dark=CAY,
    bg=GLA, fg=COC, sub=COC,
    thesis='Dlhovekosť ako presná disciplína. WEIDE je postavená ako budova: modulárne litery na mriežke, travertín, denné svetlo a jediný kayenský stĺp, ktorý je ľudskou osou v systéme.',
-   logo_text=[('Konštruované písmo', 'Vlastné litery na mriežke 700 jednotiek. Kmene 96, horizontály 80, rezy na vrcholoch W sú vodorovné ako kamenné bloky.'),
+   logo_text=[('Konštruované písmo', 'Vlastné litery na mriežke 700 jednotiek. Tenké kmene 46 a horizontály 40, široký architektonický tracking, vodorovné rezy na vrcholoch W ako kamenné bloky.'),
               ('Portál D', 'Oblúk D je rovnaký ako oblúk vstupu do budovy. Ten istý tvar sa vracia v symbole, signáži a fotografii.'),
               ('Stĺp I', 'I je jediný farebný prvok: kayenský stĺp, vitalita uprostred systému. V monochrome zostáva tvarom rovnaké.')],
    type_pair=('Manrope', 'EB Garamond Italic'),
@@ -308,8 +325,8 @@ DIR = {
    thesis='Dlhovekosť ako každodenná vitalita. Malé písmená, teplá kayenská farba a živý list robia z WEIDE značku, ktorú ľudia nosia so sebou: v aplikácii, v rituáloch aj doma.',
    logo_text=[('List namiesto bodky', 'Bodka nad i je nahradená vŕbovým listom. Je to nový výhonok, regenerácia v najmenšej mierke.'),
               ('Šikmý rez d', 'Driek písmena d je zrezaný pod uhlom, ako vŕbový odrezok pripravený zakoreniť. Odkazuje na to, že vŕba vyrastie z jedného prútika.'),
-              ('Mäkký kontrast', 'DM Serif Display s užším kerningom. Bohatý kontrast ťahov drží značku čitateľnú aj v 16 px a vo farbe pôsobí priateľsky a sebavedomo.')],
-   type_pair=('DM Serif Display', 'DM Sans'),
+              ('Jemná minuska', 'Cormorant Garamond 500 v minuskách so stiahnutým kerningom. Elegantný kontrast, ktorý vo farbe pôsobí teplo a osobne. Z vŕbového listu vzniká botanický vzor pre slepotlač.')],
+   type_pair=('Cormorant Garamond', 'DM Serif Display Italic · DM Sans'),
    ratio=[('Cayenne', CAY, 52, LIM), ('Bitter Cocoa', COC, 22, LIM), ('Weathered Glass', GLA, 16, COC), ('Limestone', LIM, 10, COC)],
    words='Výhonok · Teplo · Pohyb · Koža · Ráno',
    photo='Fotografia: telo v pohybe, ranné slnko, vŕby pri vode, koža a ľan. Zrnitý film, teplé tóny posunuté do kayenskej, prirodzené momenty, žiadne pózovanie.'),
@@ -358,29 +375,47 @@ add(f'''<div class="pad grid-2">
 </div></div>
 </div>''', bg=LIM, fg=COC, label='Stratégia')
 
-# 3 palette
-def sw(name, hexv, rgb, cmyk, role, txt, big=True):
-    return f'''<div class="sw-card {'sw-big' if big else ''}" style="background:{hexv};color:{txt}">
-<div><p class="sw-name">{name}</p><p class="sw-role">{role}</p></div>
-<div class="sw-spec"><span>HEX {hexv}</span><span>RGB {rgb}</span><span>CMYK ≈ {cmyk}</span></div></div>'''
-add(f'''<div class="pad pal">
-<div class="pal-head"><p class="eyebrow">Povinná paleta</p><h2>Tri farby, tri úlohy.</h2></div>
-<div class="pal-grid">
-{sw('Cayenne Dust', CAY, '157 63 13', '0 60 92 38', 'Energia a vitalita. Akcent, ktorý sa pamätá.', LIM)}
-{sw('Weathered Glass', GLA, '154 176 170', '13 0 3 31', 'Pokoj, regenerácia, čistota. Svetlo a vzduch.', COC)}
-{sw('Bitter Cocoa', COC, '57 27 23', '0 53 60 78', 'Hĺbka, kontrast, prémiový charakter. Nosná farba písma.', LIM)}
-<div class="neutrals">
-{sw('Limestone', LIM, '242 237 229', '0 2 5 5', 'Teplá biela, papier a svetlo.', COC, False)}
-{sw('Travertine', TRA, '222 214 202', '0 4 9 13', 'Minerálny neutrál, kameň.', COC, False)}
-</div></div>
-<div class="pal-notes"><span>Kontrast Cocoa na Limestone 13.4 : 1</span><span>Glass na Cocoa 6.8 : 1</span><span>Cayenne na Limestone 5.7 : 1</span><span>Cayenne na Glass 2.9 : 1, len pre veľké plochy, nie text</span><span>CMYK hodnoty sú orientačné, finálne sa overia nátlačkom</span></div>
-</div>''', bg=LIM, fg=COC, label='Farby')
+# 2b references
+REF = [
+ ('Jeden vlastný znak v logu', 'The Grid má ligatúru GR, Amara hviezdu v A. Logo si pamätáme podľa jedného detailu.', 'WEIDE: prepletené W, stĺp I, vŕbový list nad i.'),
+ ('Kontrast a tesná sadzba', 'Vysoký kontrast ťahov, písmená takmer na dotyk. Wordmark pôsobí ako jeden objekt.', 'Smery A a C sú stiahnuté a kontrastnejšie, B je zľahčený a vzdušný.'),
+ ('Luxus nesie materiál', 'Slepotlač, razba do kože, vosková pečať, fólia, papier s vláknom.', 'Nové aplikácie: koža s razbou, kayenská pečať, vŕbová slepotlač.'),
+ ('Editoriálny rám', 'Drobná sadzba v rohoch (autor, rok, miesto) a hodnoty v rámčekoch.', 'Hero vizuály dostali rovnaký systém s textami WEIDE.'),
+ ('Paleta cez materiál', 'Farba nie je štvorec, ale dvojica textúry a plochy s hodnotami.', 'Nový slide palety: hlina, sklo, koža, papier a kameň.'),
+ ('Rytmus carouselu', 'Hero, opakovaný wordmark, makro detail, paleta, ľudia v pohybe.', 'Rovnaký rytmus použijeme v carouseli vo Fáze 2.'),
+]
+add('<div class="pad refs"><div class="refs-head"><p class="eyebrow">Kalibrácia podľa referencií</p><h2>Čo si berieme z The Grid, Amara a Marceau.</h2><p class="body">Referencie nekopírujeme. Berieme z nich úroveň remesla, WEIDE má vlastný príbeh vŕby.</p></div><div class="refs-grid">' + ''.join(
+ f'<div class="ref"><span class="ref-n">{i+1:02d}</span><b>{t}</b><p>{a}</p><p class="ref-w">{w}</p></div>' for i, (t, a, w) in enumerate(REF)) + '</div></div>', bg=LIM, fg=COC, label='Referencie')
+
+# 3 palette (materials)
+def band_svg(inner, bg):
+    return f'<svg class="band-art" viewBox="0 0 600 200" preserveAspectRatio="xMidYMid slice"><rect width="600" height="200" fill="{bg}"/>{inner}{grain(600, 200, .16)}</svg>'
+mat_clay = band_svg(f'<rect width="600" height="200" fill="{CAY}" filter="url(#clay)"/><ellipse cx="420" cy="230" rx="300" ry="120" fill="#000" opacity=".25" filter="url(#soft)"/>', CAY)
+mat_glass = band_svg(''.join(f'<rect x="{x}" width="14" height="200" fill="#fff" opacity="{.05 + .14 * ((x // 14) % 2)}"/>' for x in range(0, 600, 14)) + '<ellipse cx="200" cy="60" rx="160" ry="90" fill="#fff" opacity=".25" filter="url(#softer)"/>', GLA)
+mat_leather = band_svg(f'<rect width="600" height="200" fill="{COC}" filter="url(#leather)"/><rect y="150" width="600" height="2" fill="#000" opacity=".35"/><line x1="0" x2="600" y1="138" y2="138" stroke="#1a0906" stroke-dasharray="8 6" stroke-width="2"/>', COC)
+mat_paper = band_svg(f'<rect width="300" height="200" fill="{LIM}" filter="url(#paper)"/><rect x="300" width="300" height="200" fill="#fff" filter="url(#stone)"/>', LIM)
+def band(art, sws):
+    cells = ''.join(f'<div class="bsw" style="background:{h};color:{t}"><p class="bname">{n}</p><p class="bspec">HEX {h}<br/>RGB {rgb}<br/>CMYK ≈ {cmyk}</p></div>' for n, h, rgb, cmyk, t in sws)
+    return f'<div class="band"><div class="bmat">{art}</div>{cells}</div>'
+add(f'''<div class="pad pal2">
+<div class="pal2-l"><p class="eyebrow">Povinná paleta</p><h2>Tri farby, tri materiály.</h2>
+<div class="roles"><div><b style="color:{CAY}">Cayenne Dust</b><p>Energia a vitalita. Hlina, terakota, vosk.</p></div>
+<div><b>Weathered Glass</b><p>Pokoj, regenerácia, čistota. Sklo, voda, ranné svetlo.</p></div>
+<div><b>Bitter Cocoa</b><p>Hĺbka a prémiový charakter. Koža, drevo, písmo.</p></div>
+<div><b>Limestone · Travertine</b><p>Nevyhnutné neutrály. Bavlnený papier a kameň.</p></div></div>
+<p class="pal-note">Kontrast Cocoa na Limestone 13.4 : 1 · Glass na Cocoa 6.8 : 1 · Cayenne na Limestone 5.7 : 1 · Cayenne na Glass 2.9 : 1, len pre plochy. CMYK je orientačné, overí sa nátlačkou.</p></div>
+<div class="bands">
+{band(mat_clay, [('Cayenne Dust', CAY, '157 63 13', '0 60 92 38', LIM)])}
+{band(mat_glass, [('Weathered Glass', GLA, '154 176 170', '13 0 3 31', COC)])}
+{band(mat_leather, [('Bitter Cocoa', COC, '57 27 23', '0 53 60 78', LIM)])}
+{band(mat_paper, [('Limestone', LIM, '242 237 229', '0 2 5 5', COC), ('Travertine', TRA, '222 214 202', '0 4 9 13', COC)])}
+</div></div>''', bg=LIM, fg=COC, label='Farby')
 
 # 4 typography
 fonts = [
- ('Cormorant Garamond', 'tf-cormorant', 'Najvyšší kontrast ťahov, dlhé serify, úzke proporcie. Najviac luxusu, ale pod 14 pt krehne.', 'Smer A · display'),
+ ('Cormorant Garamond', 'tf-cormorant', 'Najvyšší kontrast ťahov, dlhé serify, úzke proporcie. Najviac luxusu, ale pod 14 pt krehne.', 'Smery A a C · wordmark'),
  ('EB Garamond', 'tf-ebgaramond', 'Robustnejší Garamond s pokojnou textúrou. Ideálny pre dlhý editoriálny text a citáty.', 'Smer B · akcent, kurzíva'),
- ('DM Serif Display', 'tf-dmserif', 'Silný kontrast, mäkké kvapkové koncovky, veľká x-výška. Najteplejší a najčitateľnejší v malom.', 'Smer C · display'),
+ ('DM Serif Display', 'tf-dmserif', 'Silný kontrast, mäkké kvapkové koncovky, veľká x-výška. Najteplejší a najčitateľnejší v malom.', 'Smer C · titulky, kurzíva'),
  ('Manrope', 'tf-manrope', 'Široký, technický grotesk s otvorenými tvarmi. Pôsobí architektonicky a presne.', 'Smer B · text a UI'),
  ('DM Sans', 'tf-dmsans', 'Nízky kontrast, geometrický, neutrálny. Najlepší partner pre výrazný serif.', 'Smery A a C · text a UI'),
 ]
@@ -425,15 +460,16 @@ for k in 'ABC':
 {moodgrid(tiles[k])}
 </div>''', bg=LIM, fg=COC, label=f'Smer {k} · Moodboard')
     # hero
-    add(f'<div class="full">{heroes[k]}<span class="hero-cap">Hero vizuál · art-direction kompozícia</span></div>', label=f'Smer {k} · Hero', bg=COC, fg=LIM)
+    add(f'<div class="full">{heroes[k]}</div>', label=f'Smer {k} · Hero', bg=COC, fg=LIM)
     # application
-    add(f'<div class="full">{apps[k]}<span class="hero-cap">Aplikácia · {["Vizitky, slepotlač a fólia","Signáž, kovové litery na travertíne","Welcome kit, obal a karta"]["ABC".index(k)]}</span></div>', label=f'Smer {k} · Aplikácia', bg=COC, fg=LIM)
+    add(f'<div class="full">{apps[k]}<span class="hero-cap">Aplikácia · {["Koženkové desky s razbou, vosková pečať, vizitka","Signáž, kovové litery na travertíne","Slepotlač vŕby na bavlnenom papieri, fóliová karta"]["ABC".index(k)]}</span></div>', label=f'Smer {k} · Aplikácia', bg=COC, fg=LIM)
 
 # comparison
 cmp_rows = [
  ('Charakter', 'Galéria, ticho, šerosvit', 'Architektúra, systém, presnosť', 'Vitalita, teplo, každodennosť'),
  ('Najsilnejšie v', 'Tlač, interiér, premium print', 'Signáž, wayfinding, digitál', 'Sociálne siete, produkty, app'),
  ('Dominantná farba', 'Bitter Cocoa', 'Weathered Glass', 'Cayenne Dust'),
+ ('Blízkosť referenciám', 'The Grid, Amara: kontrast, tmavé materiály, razba', 'Marceau: široké verzálky, presnosť', 'Amara: jemný serif, botanická slepotlač'),
  ('Riziko', 'Môže pôsobiť ako hotel alebo móda', 'Môže pôsobiť chladne bez fotografie ľudí', 'Bližšie k wellness než k medicíne'),
 ]
 add(f'''<div class="pad cmp">
@@ -443,7 +479,7 @@ add(f'''<div class="pad cmp">
 <div style="background:{COC}">{mark(LA, LIM, w="80%")}</div><div style="background:{GLA}">{mark(LB, COC, CAY, w="72%")}</div><div style="background:{CAY}">{mark(LC, LIM, COC, w="56%")}</div></div>
 {''.join(f'<div class="cmp-row"><span>{r[0]}</span><p>{r[1]}</p><p>{r[2]}</p><p>{r[3]}</p></div>' for r in cmp_rows)}
 </div>
-<div class="reco"><b>Odporúčanie ReVisual</b><p>Smer A ako hlavná identita. Prepletené W je najoriginálnejší a najviac vlastniteľný detail, priamo spätý s významom mena, a serif zodpovedá preferencii elegantného typografického wordmarku. Do Fázy 2 odporúčame prevziať architektonický systém zo smeru B (oblúk, mriežka, signáž) ako sekundárny jazyk pre priestor.</p></div>
+<div class="reco"><b>Odporúčanie ReVisual</b><p>Smer A ako hlavná identita. Prepletené W je najoriginálnejší detail, priamo spätý s významom mena, a tesný kontrastný serif má rovnakú silu ako vaše referencie. Z C odporúčame prevziať vŕbový vzor pre slepotlač a z B oblúk a mriežku pre priestor a signáž.</p></div>
 </div>''', bg=LIM, fg=COC, label='Rozhodnutie')
 
 # prompts
@@ -464,7 +500,7 @@ add(f'''<div class="pad next">
 <p class="lead">Vyberte smer A, B alebo C, prípadne kombináciu, napríklad logo z A a priestorový systém z B. Až potom pokračujeme.</p></div>
 <div class="next-cols">
 <div><b>Fáza 2 po schválení</b><p>Finálne doladenie loga a kerningu · kompletná identita · brand manuál · 10 mockupov · fotografie z promptov s vloženým presným logom · Instagram carousel 10 × 1080 × 1350 px</p></div>
-<div><b>Potrebujeme od vás</b><p>Screenshoty dvoch Instagram referencií. Odkazy sa z nášho prostredia nedajú otvoriť, preto boli smery postavené len na brief. Screenshoty použijeme na kalibráciu art direction pred Fázou 2.</p></div>
+<div><b>Potrebujeme od vás</b><p>Výber smeru a prípadné pripomienky k detailom loga. Fotografické scény pripravíme z promptov a doplníme ich editoriálnou typografiou, ako v referenciách.</p></div>
 </div></div>''', bg=COC, fg=LIM, label='Ďalší krok')
 
 # ---------------------------------------------------------------- PAGE
