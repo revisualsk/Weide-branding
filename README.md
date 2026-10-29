@@ -21,3 +21,13 @@ Verzia 3 používa dodané fonty (Graze, Chambery, Quiet Luxury, Luxury). Logá 
 Paleta: Cayenne Dust `#9D3F0D` · Weathered Glass `#9AB0AA` · Bitter Cocoa `#391B17` · Limestone `#F2EDE5` · Travertine `#DED6CA`.
 
 Vizuály vo Fáze 1 sú vektorové art-direction kompozície. Fotografické scény vzniknú vo Fáze 2 z promptov v prezentácii (slide 23) a presné logo sa do nich vloží ako vektor.
+
+## Fáza 2 · Identita smeru A (Graze)
+
+- `phase-2/WEIDE_Phase-2_Presentation.pdf` a `phase-2/index.html` – logo systém, 9 mockupov, Instagram carousel, prompty pre fotorealistické verzie
+- `phase-2/WEIDE_Brand-Guidelines.pdf` a `phase-2/manual.html` – brand manuál (15 strán)
+- `phase-2/logos/` – lockup, wordmark, mikro wordmark, monogram a pečať v SVG a PNG (cocoa, limestone, cayenne, black, white)
+- `phase-2/mockups/` – 9 mockupov 1920 × 1080 PNG
+- `phase-2/instagram/` – carousel 10 × 1080 × 1350 PNG a texty k príspevku (`caption.md`)
+
+Mockupy sú vektorové vizualizácie s presným logom, nie fotografie realizácií.
