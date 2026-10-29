@@ -11,7 +11,7 @@ Prekrížené W ako vŕbové prútie. Serify, ktoré sa dotýkajú a tvoria jedn
 Time, well kept.
 
 Brand identity: ReVisual
-Koncept a vizualizácie: 2026
+2026
 
 ## Caption (EN)
 
@@ -23,7 +23,7 @@ A woven W like willow rods. Serifs that touch to form one line. A calm palette o
 
 Time, well kept.
 
-Brand identity by ReVisual · Concept 2026
+Brand identity by ReVisual · 2026
 
 ## Hashtags
 
