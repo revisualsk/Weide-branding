@@ -44,11 +44,16 @@ P.append((f'''<div class="pad sys">
 <div class="sg" style="background:{LIM}"><div class="micro-row">{mk(MICRO, COC, h="22")}{mk(MICRO, COC, h="16")}</div><p>Mikro verzia pod 40 px</p></div>
 </div></div>''', LIM, COC, 'Logo systém'))
 
-for i, (t, f) in enumerate(MOCKS):
-    P.append((full(f(), f'{i+1:02d} · {t}', COC if i in (2, 3, 6, 8) else LIM), COC, LIM, ''))
+PH = [('01','web-tablet','Web · tablet'),('02','web-desktop','Web · desktop'),('03','cover-shadow','Cover'),('04','details-grid','Detaily'),('05','palette-vertical','Paleta'),('06','palette-horizontal','Paleta · materiály'),('07','treatment-towel','Ošetrovňa · monogram'),('08','fluted-glass','Sklenená priečka'),('09','bottle','Produkt'),('10','lounge','Relaxačná zóna'),('11','treatment-room','Diagnostická miestnosť'),('12','business-cards','Vizitky'),('13','hero-body','Hero kampaň'),('14','collage','Prehľad identity'),('15','entrance','Vstup'),('16','stationery','Tlačoviny')]
+def img(n): 
+    nn, slug, t = PH[n-1]
+    return f'<figure class="ph"><img src="mockups/WEIDE_{nn}_{slug}.jpg" alt="WEIDE {t}" loading="lazy"><figcaption>{nn} · {t}</figcaption></figure>'
+P.append((f'<div class="full">{img(14).replace("class=\"ph\"", "class=\"ph ph-full\"")}</div>', COC, LIM, ''))
+for grp in ((13, 15, 3), (11, 10, 7), (8, 9, 4), (12, 16, 5), (1, 2, 6)):
+    P.append((f'<div class="phrow">{"".join(img(n) for n in grp)}</div>', COC, LIM, ''))
 
-ig_thumbs = ''.join(f'<div class="igt">{f()}</div>' for f in SLIDES)
-P.append((f'<div class="pad igslide"><div class="ig-head"><p class="eyebrow">Mockup 10 · Instagram</p><h2>Carousel 10 × 1080 × 1350.</h2><p class="body">Prvý slide je cover do feedu ReVisual. Ďalej sa strieda príbeh mena, detail loga, rytmus wordmarku, paleta, architektúra, materiál, interiér, digitál a záverečná pečať.</p></div><div class="ig-grid">{ig_thumbs}</div></div>', LIM, COC, 'Instagram carousel'))
+ig_thumbs = ''.join(f'<div class="igt"><img src="instagram/WEIDE_carousel_{i+1:02d}.jpg" alt="Carousel {i+1}" loading="lazy"></div>' for i in range(10))
+P.append((f'<div class="pad igslide"><div class="ig-head"><p class="eyebrow">Instagram</p><h2>Carousel 10 × 1080 × 1350.</h2><p class="body">Cover s kampaňovou fotografiou, príbeh mena, detail loga, vstup, paleta, vizitky, sklenená priečka, diagnostická miestnosť, web a tlačoviny.</p></div><div class="ig-grid">{ig_thumbs}</div></div>', LIM, COC, 'Instagram carousel'))
 
 PROMPTS = [
  ('Monumentálny vstup', 'Architectural photograph at dusk, monumental travertine facade of a contemporary longevity centre in the Austrian Alps, a single tall rectangular portal glowing warm amber from inside, bronze lettering above the portal left blank, reflecting pool in the foreground, sage-grey sky (#9AB0AA), perfect symmetry, tilt-shift lens, quiet luxury --ar 16:9 --style raw --v 7'),
@@ -57,14 +62,12 @@ PROMPTS = [
  ('Ľudia', 'Sculptural portrait of a woman in her fifties in a cocoa-brown linen robe, turned away from camera, single warm window light like a marble statue, sage-grey background, dignified, editorial, 85mm --ar 4:5 --style raw --v 7'),
  ('Materiál', 'Macro still life, cocoa-brown leather folder with a blind-debossed area left blank, cayenne wax seal, limestone cotton paper card, raking light from upper left, premium stationery photography --ar 4:5 --style raw --v 7'),
 ]
-P.append(('<div class="pad prompts"><div class="pr-head"><p class="eyebrow">Fotorealistické verzie</p><h2>Prompty pre Midjourney / ChatGPT Images</h2><p class="body">Mockupy sú vektorové kompozície s presným logom. Pre fotorealistické verzie vygenerujte scény z promptov nižšie (logo plochy sú v nich prázdne) a pošlite mi ich. Presné logo do nich vložím ako vektor s perspektívou a materiálom.</p></div><div class="pr-grid p5">' +
-          ''.join(f'<div class="pr-col"><p class="pr-k">{t}</p><p class="pr">{p}</p></div>' for t, p in PROMPTS) + '</div></div>', LIM, COC, 'Prompty'))
 
 P.append((f'''<div class="pad next">
 <div><p class="eyebrow">Odovzdanie</p><h2>Identita je pripravená.</h2>
-<p class="lead">Súčasťou je logo systém v SVG a PNG, 9 mockupov a Instagram carousel v PNG, brand manuál a texty k príspevku.</p></div>
+<p class="lead">Súčasťou je logo systém v SVG a PNG, 16 fotorealistických mockupov, Instagram carousel, brand manuál a texty k príspevku.</p></div>
 <div class="next-cols">
-<div><b>Ďalší krok</b><p>Pošlite vygenerované fotografie z promptov a vložím do nich presné logo. Prípadné pripomienky k mockupom zapracujeme v jednom kole.</p></div>
+<div><b>Ďalší krok</b><p>Pripomienky k výberu a poradiu fotografií alebo k carouselu zapracujeme v jednom kole.</p></div>
 <div><b>Poznámka k fontom</b><p>Graze a ostatné dodané fonty nie sú súčasťou balíka. Logo je v krivkách. Pred použitím u klienta overte licenciu písma pre logo a web.</p></div>
 </div></div>''', COC, LIM, 'Odovzdanie'))
 
@@ -174,14 +177,14 @@ mslide(f'''<div class="pad photo"><div class="ph-l"><p class="eyebrow">Fotografi
 <div><b>Človek ako socha</b><p>Telo a pokoj, nie výkon. Žiadne pózovanie ani úsmev do objektívu.</p></div>
 <div><b>Materiál</b><p>Travertín, koža, sklo, bavlnený papier, bronz. Detail namiesto celku.</p></div>
 <div><b>Farebnosť</b><p>Teplé tóny posunuté do Cocoa a Cayenne, svetlá v Glass. Jemné zrno.</p></div></div></div>
-<div class="ph-r">{hero_A()}</div></div>''', lab='Fotografia')
+<div class="ph-r"><img src="mockups/WEIDE_13_hero-body.jpg" alt="WEIDE kampaň"></div></div>''', lab='Fotografia')
 
 mslide('''<div class="pad grid-2"><div class="col"><p class="eyebrow">Tón komunikácie</p><h2>Hovoríme menej, s istotou.</h2>
 <p class="lead">Pokojne, presne a kultivovane. Bez superlatívov, bez sľubov, ktoré nevieme overiť. Vedu vysvetľujeme ľudsky.</p></div>
 <div class="col tone"><div class="tn"><span>Áno</span><p>Precízna diagnostika a osobný plán na ďalšie desaťročia.</p></div><div class="tn no"><span>Nie</span><p>Revolučná terapia, ktorá vás omladí o 20 rokov!</p></div>
 <div class="tn"><span>Áno</span><p>Time, well kept.</p></div><div class="tn no"><span>Nie</span><p>Najlepšie longevity centrum v Európe.</p></div></div></div>''', lab='Tón komunikácie')
 
-thumbs = ''.join(f'<div class="ap"><div class="ap-art">{f()}</div><p>{t}</p></div>' for t, f in MOCKS)
+thumbs = ''.join(f'<div class="ap"><div class="ap-art"><img src="mockups/WEIDE_{nn}_{slug}.jpg" alt="{t}" loading="lazy"></div><p>{t}</p></div>' for nn, slug, t in [PH[i] for i in (14, 10, 11, 7, 6, 8, 15, 0)])
 mslide(f'<div class="pad apps"><div><p class="eyebrow">Aplikácie</p><h2>WEIDE v priestore, papieri a obrazovke.</h2></div><div class="ap-grid">{thumbs}</div></div>', lab='Aplikácie')
 
 mslide(f'''<div class="cover2"><div class="cover-top"><span>Brand Guidelines</span><span>ReVisual</span></div>
