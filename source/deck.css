@@ -212,3 +212,15 @@ h3{font:400 4em/1 var(--f-display)}
 .bsw{position:relative;padding:1em 1.2em;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;text-align:right}
 .bname{font:400 1.6em/1 var(--f-display)}
 .bspec{font:400 .72em/1.5 var(--f-manrope);letter-spacing:.12em;font-variant-numeric:tabular-nums}
+
+/* typography v3 + alternatives */
+.tspecw{min-width:0;height:4.4em;display:flex;align-items:center}
+.tsvg{height:100%;width:100%;display:block}
+.alts{display:grid;grid-template-rows:auto 1fr;gap:2.4em}
+.alts-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1.6em 2.4em;padding-bottom:3em;min-height:0}
+.alt{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr auto;gap:0 .8em;min-height:0}
+.alt-l,.alt-d{display:grid;place-items:center;min-height:0}
+.alt-l{border:1px solid rgba(57,27,23,.15)}
+.alt-d{background:var(--cocoa)}
+.alt svg{height:auto;max-height:55%}
+.alt p{grid-column:1/3;font:500 .78em/1 var(--f-sans);letter-spacing:.2em;text-transform:uppercase;padding-top:.9em}

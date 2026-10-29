@@ -1,14 +1,15 @@
 import math, random, os, sys
 from logos import symbol_A
-from logos2 import logo_A2, logo_B2, logo_C2, seal_A, symbol_B2, symbol_C2
+from logos2 import symbol_B2
+from logos3 import logo_GA, logo_GC, logo_CB, mono_GA, wonly_GA, sym_GC, simple, text_path, GRAZE, CHAMB, LUX, QSERIF, QSCRIPT
 from mat import MAT_DEFS, wax_blob
 
 CAY, GLA, COC, LIM, TRA = '#9D3F0D', '#9AB0AA', '#391B17', '#F2EDE5', '#DED6CA'
 OUT = sys.argv[1]
 
-LA, LB, LC = logo_A2(), logo_B2(), logo_C2()
-SA, SB, SC = symbol_A(), symbol_B2(), symbol_C2()
-SEAL = seal_A()
+LA, LB, LC = logo_GA(), logo_CB(), logo_GC()
+SA, SB, SC = wonly_GA(), symbol_B2(), sym_GC()
+SEAL = mono_GA()
 
 def strip_defs(body):
     return body.split('</defs>', 1)[1] if body.startswith('<defs>') else body
@@ -18,14 +19,15 @@ def mark(lg, fill, accent=None, h=None, w=None, pad=0, cls='mark', style=''):
     accent = accent or fill
     size = (f' height="{h}"' if h else '') + (f' width="{w}"' if w else '')
     return (f'<svg class="{cls}" style="--acc:{accent};{style}" xmlns="http://www.w3.org/2000/svg" '
-            f'viewBox="{x-pad} {y-pad} {bw+2*pad} {bh+2*pad}"{size} fill="{fill}" role="img" aria-label="WEIDE">'
+            f'viewBox="{x-pad} {y-pad} {bw+2*pad} {bh+2*pad}"{size} fill="{fill}" color="{fill}" role="img" aria-label="WEIDE">'
             f'{strip_defs(body)}</svg>')
 
 def nest(lg, fill, accent, x, y, w):
     """place a logo inside a parent 1920x1080 svg, by width"""
     body, (bx, by, bw, bh) = lg
     s = w / bw
-    return (f'<g transform="translate({x},{y}) scale({s:.5f}) translate({-bx},{-by})" fill="{fill}" style="--acc:{accent}">'
+    col = f' color="{fill}"' if fill.startswith('#') else ''
+    return (f'<g transform="translate({x},{y}) scale({s:.5f}) translate({-bx},{-by})" fill="{fill}"{col} style="--acc:{accent}">'
             f'{strip_defs(body)}</g>')
 
 def standalone(lg, fill, accent=None, pad=40):
@@ -36,6 +38,7 @@ def standalone(lg, fill, accent=None, pad=40):
 
 GLOBAL_DEFS = f'''<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <clipPath id="aCut"><path d="M0 -700H600V-428H213V-212H600V100H0Z"/></clipPath>
+<clipPath id="gCutE"><path d="M-100 -800H500V-540H119V-390H500V100H-100Z"/></clipPath>
 <clipPath id="cCut2"><path d="M-50 100V-560H300L460 -700V100Z"/></clipPath>
 {MAT_DEFS}
 <radialGradient id="wax" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#b8541d"/><stop offset=".7" stop-color="#9D3F0D"/><stop offset="1" stop-color="#6e2706"/></radialGradient>
@@ -64,6 +67,11 @@ def tags(x, y, words, fg, size=13):
         out.append(f'<rect x="{cx}" y="{y}" width="{w:.0f}" height="{size+15}" fill="none" stroke="{fg}" stroke-width="1"/><text x="{cx+w/2:.0f}" y="{y+size+5}" text-anchor="middle" class="t-dmsans" font-size="{size}" letter-spacing="2.4" fill="{fg}">{w_}</text>')
         cx += w
     return ''.join(out)
+
+def outline(font, s, x, y, size, fill, anchor='start', track=0):
+    body, w = text_path(font, s, track)
+    sc = size / 1000; dx = {'start': 0, 'middle': -w * sc / 2, 'end': -w * sc}[anchor]
+    return f'<g transform="translate({x + dx:.1f},{y}) scale({sc:.4f})" fill="{fill}">{body}</g>'
 
 def grain(w=1920, h=1080, op=.22):
     return f'<rect width="{w}" height="{h}" fill="#fff" filter="url(#grain)" opacity="{op}" style="mix-blend-mode:overlay"/>'
@@ -96,7 +104,7 @@ def hero_A():
 <polygon points="1080,160 1230,160 830,920 700,920" fill="url(#hAbeam)" style="mix-blend-mode:screen"/>
 </g>
 <ellipse cx="960" cy="520" rx="240" ry="350" fill="none" stroke="{GLA}" stroke-width="1" opacity=".5"/>
-{nest(LA, LIM, LIM, 750, 912, 420)}
+{nest(LA, LIM, LIM, 845, 900, 230)}
 {chrome(LIM, .7, bm='')}
 {grain(op=.2)}
 </svg>'''
@@ -186,11 +194,11 @@ def hero_C():
 <circle cx="1390" cy="430" r="330" fill="url(#hCsun)"/>
 <g opacity=".18" transform="translate(40,60)" filter="url(#soft)">{willow(seed=9, n=16, leafcol=("#2a0f08","#2a0f08","#2a0f08"))}</g>
 <g>{willow()}</g>
-{nest(LC, LIM, COC, 130, 610, 780)}
-<text x="140" y="900" class="t-dmsans" font-size="18" letter-spacing="7" fill="{LIM}">LONGEVITY &amp; REGENERATIVE HEALTH</text>
+{nest(LC, LIM, COC, 130, 590, 620)}
+<text x="140" y="880" class="t-dmsans" font-size="18" letter-spacing="7" fill="{LIM}">LONGEVITY &amp; REGENERATIVE HEALTH</text>
 {chrome(LIM, .75)}
-<text x="140" y="250" class="t-dmserif-i" font-size="58" fill="{LIM}">Regeneration is</text>
-<text x="140" y="318" class="t-dmserif-i" font-size="58" fill="{LIM}">a daily practice.</text>
+{outline(QSCRIPT, 'Regeneration is', 140, 250, 96, LIM)}
+{outline(QSCRIPT, 'a daily practice.', 190, 360, 96, LIM)}
 {grain(op=.2)}
 </svg>'''
     return s
@@ -248,11 +256,11 @@ def app_C():
 <g filter="url(#lift)"><rect x="420" y="90" width="760" height="980" fill="{LIM}"/></g>
 <rect x="420" y="90" width="760" height="980" fill="{LIM}" filter="url(#paper)"/>
 <g clip-path="url(#cPaper)"><g filter="url(#deboss)" transform="translate(-260,40)">{willow(seed=11, x0=760, x1=1430, n=11, scale=1.05, leafcol=(LIM, LIM, LIM))}</g></g>
-{nest(LC, COC, CAY, 560, 830, 320)}
-<text x="562" y="975" class="t-dmsans" font-size="12" letter-spacing="4" fill="{COC}" opacity=".75">LONGEVITY &amp; REGENERATIVE HEALTH</text>
+{nest(LC, COC, CAY, 560, 840, 300)}
+<text x="562" y="1000" class="t-dmsans" font-size="12" letter-spacing="4" fill="{COC}" opacity=".75">LONGEVITY &amp; REGENERATIVE HEALTH</text>
 <g transform="translate(1260,330) rotate(8)" filter="url(#lift)"><rect width="420" height="600" fill="{COC}"/><rect width="420" height="600" fill="{COC}" filter="url(#leather)" opacity=".6"/>
 <g filter="url(#foilE)">{nest(LC, "url(#foil)", "url(#copperfoil)", 80, 300, 260)}</g>
-<text x="210" y="520" text-anchor="middle" class="t-dmserif-i" font-size="26" fill="{GLA}">Regeneration is a daily practice.</text></g>
+{outline(QSCRIPT, 'Regeneration is a daily practice.', 210, 520, 34, GLA, 'middle')}</g>
 <rect width="1920" height="1080" fill="url(#cLight)"/>
 {grain(op=.14)}
 </svg>'''
@@ -303,30 +311,30 @@ DIR = {
  'A': dict(name='Editorial Luxury', code='Nocturne', logo=LA, sym=SA, acc_light=None, acc_dark=None,
    bg=COC, fg=LIM, sub=GLA,
    thesis='Dlhovekosť ako kultúra, nie ako služba. WEIDE vystupuje s pokojom súkromnej galérie: tmavé priestory, svetlo, ktoré modeluje formu, a typografia s kontrastom klasickej knihy.',
-   logo_text=[('Prepletené W', 'Dve prekrývajúce sa V z Cormorant Garamond tvoria slučku. Odkazuje na vŕbové prútie (Weide = vŕba) a na kontinuitu.'),
-              ('Dýchajúce E', 'Stredné rameno oboch E je odpojené od kmeňa a zúžené na vlasovú linku. Malá medzera dáva písmu vzduch a je to podpisový detail značky.'),
-              ('Tesná sadzba', 'Display kerning stiahnutý na hranu, serify W a E sa takmer dotýkajú. Wordmark pôsobí ako jeden celok s vysokým kontrastom ťahov. Monogram W slúži ako pečať, favicon a razba.')],
-   type_pair=('Cormorant Garamond', 'DM Sans'),
+   logo_text=[('Prepletené W', 'Graze má W s prekríženými ťahmi. Je to vŕbové prútie priamo v písme, nositeľ príbehu mena.'),
+              ('Spojené serify', 'Písmená EIDE sú stiahnuté tak, že sa serify dotýkajú a tvoria jednu líniu. Kontinuita a jeden celok, podobne ako ligatúra v The Grid.'),
+              ('Dýchajúce E', 'Stredné rameno E je odpojené od kmeňa a zostáva ako vlasová linka. Podpisový detail, ktorý funguje aj v razbe a fólii.')],
+   type_pair=('Graze', 'DM Sans'),
    ratio=[('Bitter Cocoa', COC, 58, LIM), ('Limestone', LIM, 18, COC), ('Weathered Glass', GLA, 14, COC), ('Cayenne', CAY, 10, LIM)],
    words='Šero · Socha · Bronz · Ticho · Rituál',
    photo='Fotografia: šerosvit, telo ako socha v bočnom svetle, kameň a zamat. Teplé svetlo z jedného zdroja, hlboké tiene, 85 mm, veľa negatívneho priestoru.'),
  'B': dict(name='Architectural Modernism', code='Monolith', logo=LB, sym=SB, acc_light=CAY, acc_dark=CAY,
    bg=GLA, fg=COC, sub=COC,
    thesis='Dlhovekosť ako presná disciplína. WEIDE je postavená ako budova: modulárne litery na mriežke, travertín, denné svetlo a jediný kayenský stĺp, ktorý je ľudskou osou v systéme.',
-   logo_text=[('Konštruované písmo', 'Vlastné litery na mriežke 700 jednotiek. Tenké kmene 46 a horizontály 40, široký architektonický tracking, vodorovné rezy na vrcholoch W ako kamenné bloky.'),
-              ('Portál D', 'Oblúk D je rovnaký ako oblúk vstupu do budovy. Ten istý tvar sa vracia v symbole, signáži a fotografii.'),
-              ('Stĺp I', 'I je jediný farebný prvok: kayenský stĺp, vitalita uprostred systému. V monochrome zostáva tvarom rovnaké.')],
-   type_pair=('Manrope', 'EB Garamond Italic'),
+   logo_text=[('Chambery', 'Široké geometrické verzálky s jemne rozšírenými koncami ťahov. Tracking +110 dáva značke pokoj nápisu na fasáde.'),
+              ('Stĺp I', 'I je jediný farebný prvok: kayenský stĺp, vitalita uprostred systému. V monochróme zostáva tvarom rovnaké.'),
+              ('Portál', 'Oblúk zo symbolu sa vracia vo vstupe, signáži aj fotografii. Architektúra a písmo hovoria jedným jazykom.')],
+   type_pair=('Chambery', 'Manrope'),
    ratio=[('Weathered Glass', GLA, 44, COC), ('Travertine', TRA, 26, COC), ('Bitter Cocoa', COC, 22, LIM), ('Cayenne', CAY, 8, LIM)],
    words='Os · Travertín · Denné svetlo · Proporcia · Presnosť',
    photo='Fotografia: architektúra za denného svetla, dlhé tiene, symetria a ľudská postava v mierke budovy. Tilt-shift objektív, rovné perspektívy, chladné ráno.'),
  'C': dict(name='Contemporary Longevity', code='Living Willow', logo=LC, sym=SC, acc_light=CAY, acc_dark=CAY, acc_bg=COC,
    bg=CAY, fg=LIM, sub=LIM,
    thesis='Dlhovekosť ako každodenná vitalita. Malé písmená, teplá kayenská farba a živý list robia z WEIDE značku, ktorú ľudia nosia so sebou: v aplikácii, v rituáloch aj doma.',
-   logo_text=[('List namiesto bodky', 'Bodka nad i je nahradená vŕbovým listom. Je to nový výhonok, regenerácia v najmenšej mierke.'),
-              ('Šikmý rez d', 'Driek písmena d je zrezaný pod uhlom, ako vŕbový odrezok pripravený zakoreniť. Odkazuje na to, že vŕba vyrastie z jedného prútika.'),
-              ('Jemná minuska', 'Cormorant Garamond 500 v minuskách so stiahnutým kerningom. Elegantný kontrast, ktorý vo farbe pôsobí teplo a osobne. Z vŕbového listu vzniká botanický vzor pre slepotlač.')],
-   type_pair=('Cormorant Garamond', 'DM Serif Display Italic · DM Sans'),
+   logo_text=[('Weide s veľkým W', 'Graze s kapitálkou a minuskami. Vysoké, štíhle tvary pôsobia ľudsky a elegantne, prekrížené W zostáva.'),
+              ('List namiesto bodky', 'Bodka nad i je nahradená vŕbovým listom v kayenskej farbe. Nový výhonok, regenerácia v najmenšej mierke.'),
+              ('Script ako hlas', 'Quiet Luxury Script na pozdravy, podpisy a krátke tagliny. Ručne písaný kontrapunkt k presnému serifu.')],
+   type_pair=('Graze · Quiet Luxury Script', 'DM Sans'),
    ratio=[('Cayenne', CAY, 52, LIM), ('Bitter Cocoa', COC, 22, LIM), ('Weathered Glass', GLA, 16, COC), ('Limestone', LIM, 10, COC)],
    words='Výhonok · Teplo · Pohyb · Koža · Ráno',
    photo='Fotografia: telo v pohybe, ranné slnko, vŕby pri vode, koža a ľan. Zrnitý film, teplé tóny posunuté do kayenskej, prirodzené momenty, žiadne pózovanie.'),
@@ -377,8 +385,8 @@ add(f'''<div class="pad grid-2">
 
 # 2b references
 REF = [
- ('Jeden vlastný znak v logu', 'The Grid má ligatúru GR, Amara hviezdu v A. Logo si pamätáme podľa jedného detailu.', 'WEIDE: prepletené W, stĺp I, vŕbový list nad i.'),
- ('Kontrast a tesná sadzba', 'Vysoký kontrast ťahov, písmená takmer na dotyk. Wordmark pôsobí ako jeden objekt.', 'Smery A a C sú stiahnuté a kontrastnejšie, B je zľahčený a vzdušný.'),
+ ('Jeden vlastný znak v logu', 'The Grid má ligatúru GR, Amara hviezdu v A. Logo si pamätáme podľa jedného detailu.', 'WEIDE: prekrížené W v Graze, stĺp I, vŕbový list nad i.'),
+ ('Kontrast a tesná sadzba', 'Vysoký kontrast ťahov, písmená takmer na dotyk. Wordmark pôsobí ako jeden objekt.', 'Graze so spojenými serifmi v A, Chambery so širokým trackingom v B.'),
  ('Luxus nesie materiál', 'Slepotlač, razba do kože, vosková pečať, fólia, papier s vláknom.', 'Nové aplikácie: koža s razbou, kayenská pečať, vŕbová slepotlač.'),
  ('Editoriálny rám', 'Drobná sadzba v rohoch (autor, rok, miesto) a hodnoty v rámčekoch.', 'Hero vizuály dostali rovnaký systém s textami WEIDE.'),
  ('Paleta cez materiál', 'Farba nie je štvorec, ale dvojica textúry a plochy s hodnotami.', 'Nový slide palety: hlina, sklo, koža, papier a kameň.'),
@@ -411,17 +419,22 @@ add(f'''<div class="pad pal2">
 {band(mat_paper, [('Limestone', LIM, '242 237 229', '0 2 5 5', COC), ('Travertine', TRA, '222 214 202', '0 4 9 13', COC)])}
 </div></div>''', bg=LIM, fg=COC, label='Farby')
 
-# 4 typography
+# 4 typography (supplied fonts, outlined specimens)
+def spec_svg(font, big, small, track=0):
+    b1, w1 = text_path(font, big, track); b2, w2 = text_path(font, small)
+    s2 = .42; gap = 120; W = w1 + gap + w2 * s2
+    return (f'<svg class="tsvg" viewBox="0 -760 {W:.0f} 900" preserveAspectRatio="xMinYMid meet" fill="currentColor">'
+            f'{b1}<g transform="translate({w1 + gap:.0f},0) scale({s2})" opacity=".75">{b2}</g></svg>')
 fonts = [
- ('Cormorant Garamond', 'tf-cormorant', 'Najvyšší kontrast ťahov, dlhé serify, úzke proporcie. Najviac luxusu, ale pod 14 pt krehne.', 'Smery A a C · wordmark'),
- ('EB Garamond', 'tf-ebgaramond', 'Robustnejší Garamond s pokojnou textúrou. Ideálny pre dlhý editoriálny text a citáty.', 'Smer B · akcent, kurzíva'),
- ('DM Serif Display', 'tf-dmserif', 'Silný kontrast, mäkké kvapkové koncovky, veľká x-výška. Najteplejší a najčitateľnejší v malom.', 'Smer C · titulky, kurzíva'),
- ('Manrope', 'tf-manrope', 'Široký, technický grotesk s otvorenými tvarmi. Pôsobí architektonicky a presne.', 'Smer B · text a UI'),
- ('DM Sans', 'tf-dmsans', 'Nízky kontrast, geometrický, neutrálny. Najlepší partner pre výrazný serif.', 'Smery A a C · text a UI'),
+ ('Graze', spec_svg(GRAZE, 'WEIDE Weide', 'Regeneration, made precise.'), 'Vysoký, úzky serif s extrémnym kontrastom a prekríženým W. Najsilnejší pre logo a veľké titulky.', 'Smery A a C · logo, titulky'),
+ ('Chambery', spec_svg(CHAMB, 'WEIDE Weide', 'Regeneration, made precise.'), 'Široké geometrické verzálky s jemne rozšírenými koncami. Má alternatívy a ligatúry.', 'Smer B · logo, titulky'),
+ ('Quiet Luxury Script', spec_svg(QSCRIPT, 'Weide', 'Regeneration, made precise.'), 'Elegantný script s dlhými ťahmi. Iba na krátke slová, pozdravy a podpisy.', 'Smer C · akcent'),
+ ('Luxury', spec_svg(LUX, 'WEIDE weide', 'Regeneration, made precise.'), 'Ťažší, teplý kontrastný serif s mäkkými tvarmi. Bližšie k Amara.', 'Alternatíva'),
+ ('Cormorant Garamond · DM Sans', '<div class="tspec tf-cormorant"><span class="tbig">Dlhovekosť, ľudsky.</span><span class="tmid tf-dmsans">Regenerácia, s precíznosťou.</span></div>', 'Dodané fonty nemajú slovenskú ani nemeckú diakritiku. Texty preto sadzame do Cormorant Garamond a DM Sans.', 'Text · všetky smery'),
 ]
-add('<div class="pad typo"><div class="typo-head"><p class="eyebrow">Typografické porovnanie</p><h2>Päť písiem, tri osobnosti.</h2></div><div class="typo-rows">' + ''.join(
- f'''<div class="trow"><div class="tname"><b>{n}</b><span>{use}</span></div><div class="tspec {c}"><span class="tbig">WEIDE weide</span><span class="tmid">Regeneration, made precise.</span></div><p class="tnote">{note}</p></div>'''
- for n, c, note, use in fonts) + '</div></div>', bg=LIM, fg=COC, label='Typografia')
+add('<div class="pad typo"><div class="typo-head"><p class="eyebrow">Typografia · dodané fonty</p><h2>Graze vedie, ostatné dopĺňajú.</h2></div><div class="typo-rows">' + ''.join(
+ f'''<div class="trow"><div class="tname"><b>{n}</b><span>{use}</span></div><div class="tspecw">{sp}</div><p class="tnote">{note}</p></div>'''
+ for n, sp, note, use in fonts) + '</div></div>', bg=LIM, fg=COC, label='Typografia')
 
 # direction slides
 heroes = {'A': hero_A(), 'B': hero_B(), 'C': hero_C()}
@@ -464,12 +477,22 @@ for k in 'ABC':
     # application
     add(f'<div class="full">{apps[k]}<span class="hero-cap">Aplikácia · {["Koženkové desky s razbou, vosková pečať, vizitka","Signáž, kovové litery na travertíne","Slepotlač vŕby na bavlnenom papieri, fóliová karta"]["ABC".index(k)]}</span></div>', label=f'Smer {k} · Aplikácia', bg=COC, fg=LIM)
 
+# alternatives with supplied fonts
+ALTS = [
+ ('Graze · voľnejšia sadzba', logo_GA({0: 30, 1: 34, 2: 34, 3: 34})),
+ ('Luxury · minusky', simple(LUX, 'weide', box=(-760, 780))),
+ ('Quiet Luxury Serif · verzálky', simple(QSERIF, 'WEIDE', box=(-720, 730))),
+ ('Chambery · Weide', simple(CHAMB, 'Weide', box=(-720, 735))),
+]
+add('<div class="pad alts"><div class="alts-head"><p class="eyebrow">Ďalšie možnosti s dodanými fontami</p><h2>Na porovnanie.</h2></div><div class="alts-grid">' + ''.join(
+ f'<div class="alt"><div class="alt-l">{mark(lg, COC, w="72%")}</div><div class="alt-d">{mark(lg, LIM, w="72%")}</div><p>{t}</p></div>' for t, lg in ALTS) + '</div></div>', bg=LIM, fg=COC, label='Alternatívy')
+
 # comparison
 cmp_rows = [
  ('Charakter', 'Galéria, ticho, šerosvit', 'Architektúra, systém, presnosť', 'Vitalita, teplo, každodennosť'),
  ('Najsilnejšie v', 'Tlač, interiér, premium print', 'Signáž, wayfinding, digitál', 'Sociálne siete, produkty, app'),
  ('Dominantná farba', 'Bitter Cocoa', 'Weathered Glass', 'Cayenne Dust'),
- ('Blízkosť referenciám', 'The Grid, Amara: kontrast, tmavé materiály, razba', 'Marceau: široké verzálky, presnosť', 'Amara: jemný serif, botanická slepotlač'),
+ ('Blízkosť referenciám', 'The Grid: úzky kontrastný serif, spojené písmená', 'Marceau: široké verzálky, presnosť', 'Amara: jemný serif, botanická slepotlač, script'),
  ('Riziko', 'Môže pôsobiť ako hotel alebo móda', 'Môže pôsobiť chladne bez fotografie ľudí', 'Bližšie k wellness než k medicíne'),
 ]
 add(f'''<div class="pad cmp">
@@ -479,7 +502,7 @@ add(f'''<div class="pad cmp">
 <div style="background:{COC}">{mark(LA, LIM, w="80%")}</div><div style="background:{GLA}">{mark(LB, COC, CAY, w="72%")}</div><div style="background:{CAY}">{mark(LC, LIM, COC, w="56%")}</div></div>
 {''.join(f'<div class="cmp-row"><span>{r[0]}</span><p>{r[1]}</p><p>{r[2]}</p><p>{r[3]}</p></div>' for r in cmp_rows)}
 </div>
-<div class="reco"><b>Odporúčanie ReVisual</b><p>Smer A ako hlavná identita. Prepletené W je najoriginálnejší detail, priamo spätý s významom mena, a tesný kontrastný serif má rovnakú silu ako vaše referencie. Z C odporúčame prevziať vŕbový vzor pre slepotlač a z B oblúk a mriežku pre priestor a signáž.</p></div>
+<div class="reco"><b>Odporúčanie ReVisual</b><p>Smer A v písme Graze ako hlavná identita. Prepletené W je priamo v písme a nesie príbeh vŕby, spojené serify dávajú wordmarku silu ako v The Grid. Zo smeru C odporúčame prevziať Weide s listom ako sekundárne logo a script pre osobnú komunikáciu, z B oblúk pre priestor a signáž.</p></div>
 </div>''', bg=LIM, fg=COC, label='Rozhodnutie')
 
 # prompts
