@@ -1,5 +1,19 @@
 # WEIDE — Brand Identity
 
+## Aktuálna identita · Fáza 3 (nové logo)
+
+Monogram W s vŕbovým listom, wordmark WEIDE v Cormorant Garamond 500, podnadpis v DM Sans. Paleta Cayenne Dust `#9D3F0D`, Weathered Glass `#9AB0AA`, Bitter Cocoa `#391B17`, Sand Limestone `#D8C9B7`.
+
+- `phase-3/WEIDE_Brand-Identity.pdf` a `phase-3/index.html` – prezentácia (15 slidov)
+- `phase-3/WEIDE_Brand-Guidelines.pdf` a `phase-3/manual.html` – brand manuál (16 strán)
+- `phase-3/logos/` – lockup, lockup bez podnadpisu, horizontálny lockup, monogram, wordmark a pečať v SVG a PNG (cocoa, sand-limestone, cayenne, black, white)
+- `phase-3/mockups/` – 14 fotorealistických vizualizácií (Magnific, Nano Banana 2.1), moodboard a obálka kampane s presným vektorovým logom
+- `phase-3/instagram/` – carousel 10 × 1080 × 1350 a `caption.md`
+
+Monogram je presne vektorizovaný zo schválenej predlohy (`source/newlogo/mono.svg`). Na fotografiách generuje logo model podľa predlohy, preto ho berte ako vizualizáciu; na obálke kampane je logo vložené ako presný vektor.
+
+Fázy 1 a 2 nižšie sú archív predchádzajúcich návrhov.
+
 Premium Longevity & Regenerative Health Centre, Austria. Projekt ReVisual.
 
 ## Fáza 1 · Kreatívne smery (čaká na schválenie)
